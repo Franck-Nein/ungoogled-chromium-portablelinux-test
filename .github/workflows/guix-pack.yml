@@ -29,7 +29,7 @@ jobs:
       - name: Download substitutes
         run: |
           git clone https://github.com/ungoogled-software/ungoogled-chromium 
-          cd ungoogled-chromium ; git reset --hard 5794e9d12bf82620d5f24505798fecb45ca5a22d
+          cd ungoogled-chromium ; git reset --hard 5794e9d12bf82620d5f24505798fecb45ca5a22d ; cd ..
           guix build --no-grafts --fallback ungoogled-chromium --with-source=ungoogled-chromium@=./ungoogled-chromium
 
       - name: Install Recutils
