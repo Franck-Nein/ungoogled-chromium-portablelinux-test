@@ -27,7 +27,11 @@ jobs:
         if: ${{ failure() }}
         run: echo "No binary substitute available, skipping."
       - name: Download substitutes
-        run: guix build --no-grafts --fallback ungoogled-chromium
+        run: |
+          git clone https://github.com/ungoogled-software/ungoogled-chromium 
+          cd ungoogled-chromium ; git reset --hard 5794e9d12bf82620d5f24505798fecb45ca5a22d
+          guix build --no-grafts --fallback ungoogled-chromium --with-source=ungoogled-chromium@=./ungoogled-chromium
+
       - name: Install Recutils
         run: sudo apt-get -q install recutils
       - name: Export version information
@@ -60,15 +64,8 @@ jobs:
             -- pack -RR -S /bin=bin ungoogled-chromium
           ```
           EOF
-      - name: Upload release
-        uses: ncipollo/release-action@v1
+      - name: Archive build result
+        uses: actions/upload-artifact@v3
         with:
-          allowUpdates: true
-          artifacts: ungoogled-chromium-${{ env.version }}.tar.gz
-          artifactContentType: application/gzip
-          bodyFile: ${{ runner.temp }}/release_notes.md
-          omitBodyDuringUpdate: false
-          omitName: true
-          omitNameDuringUpdate: true
-          tag: ${{ env.version }}.1
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ungoogled-chromium-${{ env.version }}
+          path: ungoogled-chromium-${{ env.version }}.tar.gz
